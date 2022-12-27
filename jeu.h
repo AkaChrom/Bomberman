@@ -83,9 +83,9 @@ void display_game(game_t game);
 
 // traitement.c
 
-void calculate_position(game_t *game);
+void calculate_position(game_t *game, int i);
 void end_game(game_t *game);
-void explosion(game_t *game);
+void explosion(game_t *game, int id);
 
 
 

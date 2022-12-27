@@ -35,8 +35,7 @@ void clear_screen() {
     )) return;
   /* Move the cursor home */
   SetConsoleCursorPosition( hStdOut, homeCoords );
-}
-  
+}  
 
 /**
  * affiche le jeu 
@@ -45,8 +44,10 @@ void clear_screen() {
 void display_game(game_t game) {
     // efface l'écran
     clear_screen();
-    // affichage du score
-    printf("Joueur : %s   score : %.2f\n\n",game.player[0].pseudo, calculate_score(game.player[0]));
+    // affichage du score pour chaque joueur
+    for (int id = 0; id < game.nb_player; id++) {
+        printf("Joueur : %s   score : %.2f\n\n",game.player[id].pseudo, calculate_score(game.player[id]));
+    }    
     // affichage du plateau
 	int i, j;
     for (i=0; i<game.lignes; i++ ){
