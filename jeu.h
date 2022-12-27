@@ -20,33 +20,73 @@
 
 enum direction {IDLE,UP,LEFT,DOWN,RIGHT};
 
-typedef struct{
-    // plateau
-    int **plateau;
-    int lignes; // Nombre de lignes de plateau
-    int colonnes; // Nobre de colonnes de plateau
-    // position
-    int posl; // ligne actuelle de l'étoile
-    int posc; // colonne actuelle de l'étoile
-    int posl_bomb; // ligne de la bombe
-    int posc_bomb; // colonne de la bombe
-    int timer;
-    int n;
-    int bomb_cpt;
-    int obstacle_cpt;
+
+/**
+ * structure qui représente un joueur
+ */
+typedef struct{   
+    // pseudo du joueur
     char pseudo[20];
-    boolean plantingBomb;
+    // position du joueur
+    int posl;
+    int posc;
+    // position de la bombe
+    int posl_bomb;
+    int posc_bomb;
+    // rayon de l'explosion
+    int n;
+    // temps avant que la bombe explose
+    int timer;
+    // nombre de bombes posées
+    int bomb_cpt;
+    // nombre d'obstacles détruits
+    int obstacle_cpt;
+    // vrai si le joueur vient de planter une bombe
+    boolean planting_bomb;
+    // vrai si le joueur est en vie
     boolean is_alive;
+    // direction du joueur
     enum direction direction; // direction actuelle du bomberman
-} star_t;
+} player_t;
 
-void * read_keyboard(void *arg);
-void read_board_game(char *fichier,star_t *star);
+
+/**
+ * structure qui représente le jeu
+ */
+typedef struct{
+    // plateau du jeu
+    int **plateau;
+    // nombre de lignes de plateau
+    int lignes;
+    // nombre de colonnes de plateau
+    int colonnes;
+    // nombre d'obstacles sur le plateau
+    int nb_obstacles;
+    // nombre de joueurs
+    int nb_player;
+    // joueurs
+    player_t *player;
+} game_t;
+
+
+// utilitaire.c
+
+void init_players(game_t *game);
+void read_board_game(char *fichier,game_t *game);
+void init_objects(game_t *game);
+float calculate_score(player_t player);
+
+// affichage.c
+
 void clear_screen();
-void display_game(star_t star);
-void init_objects(star_t *star);
-int my_rand(int valMax);
+void display_game(game_t game);
 
-void explosion(star_t *star);
-void end_game(star_t *star);
+// traitement.c
+
+void calculate_position(game_t *game);
+void end_game(game_t *game);
+void explosion(game_t *game);
+
+
+
 
