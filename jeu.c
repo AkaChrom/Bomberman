@@ -2,10 +2,12 @@
 
 pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
 
-//Sous windows utiliser cette vevrsion de lire_clavier. Mettez la fonction lire_clavier
-// ci-dessus en commentaire
-//Pour windows https://docs.microsoft.com/en-us/cpp/c-runtime-library/reference/kbhit?view=vs-2019
- void *lire_clavier(void *arg){
+/**
+ * 
+ * @param arg 
+ * @return void* 
+ */
+ void *read_keyboard(void *arg){
     star_t * star = (star_t *)arg;
     while(1) {
        
@@ -13,16 +15,16 @@ pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
         
         // Joueur 1
         if (GetAsyncKeyState(VK_UP) < 0) {
-            star->direction = HAUT;
+            star->direction = UP;
         } 
         if (GetAsyncKeyState(VK_LEFT) < 0) {
-            star->direction = GAUCHE;
+            star->direction = LEFT;
         }
         if (GetAsyncKeyState(VK_DOWN) < 0) {
-            star->direction = BAS;
+            star->direction = DOWN;
         }
         if (GetAsyncKeyState(VK_RIGHT) < 0) {
-            star->direction = DROITE;
+            star->direction = RIGHT;
         }
         if (GetAsyncKeyState(VK_SPACE) < 0) {
             if (star->timer == 0 ) {
@@ -32,16 +34,16 @@ pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
 
         // Joueur 2
         if (GetAsyncKeyState('Z') < 0) {
-            star->direction = HAUT;
+            star->direction = UP;
         } 
         if (GetAsyncKeyState('Q') < 0) {
-            star->direction = GAUCHE;
+            star->direction = LEFT;
         }
         if (GetAsyncKeyState('S') < 0) {
-            star->direction = BAS;
+            star->direction = DOWN;
         }
         if (GetAsyncKeyState('D') < 0) {
-            star->direction = DROITE;
+            star->direction = RIGHT;
         }
         if (GetAsyncKeyState('W') < 0) {
              if (star->timer == 0 ) {
@@ -55,26 +57,26 @@ pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
  }
 
 
-void calculer_direction(star_t *star) {
+void calculate_direction(star_t *star) {
 
-    if (star->plateau[star->posl][star->posc] != 4) {
-        star->plateau[star->posl][star->posc] = 0;
+    if (star->plateau[star->posl][star->posc] != BOMB) {
+        star->plateau[star->posl][star->posc] = EMPTY;
     }   
 
     switch ( star->direction )
     {
-        case HAUT:
-            if (star->plateau[star->posl-1][star->posc] == 0){                
+        case UP:
+            if (star->plateau[star->posl-1][star->posc] == EMPTY){                
                 star->posl --;
             }
             break;
-        case BAS:
-            if (star->plateau[star->posl+1][star->posc] == 0){
+        case DOWN:
+            if (star->plateau[star->posl+1][star->posc] == EMPTY){
                     star->posl ++;
             }               
             break;
-        case GAUCHE:
-            if (star->plateau[star->posl][star->posc-1] == 0){
+        case LEFT:
+            if (star->plateau[star->posl][star->posc-1] == EMPTY){
                 if (star->posc == 0) {
                     star->posc = star->colonnes-1;
                 } else {
@@ -82,8 +84,8 @@ void calculer_direction(star_t *star) {
                 }                    
             }                
             break;
-        case DROITE:
-            if (star->plateau[star->posl][star->posc+1] == 0){
+        case RIGHT:
+            if (star->plateau[star->posl][star->posc+1] == EMPTY){
                 if (star->posc == star->colonnes-1) {
                     star->posc = 0;
                 } else {
@@ -93,11 +95,11 @@ void calculer_direction(star_t *star) {
             break;
     }   
 
-    star->plateau[star->posl][star->posc] = 2;        
+    star->plateau[star->posl][star->posc] = PLAYER;        
 }
 
 
-void *deplacer_star(void *arg) {
+void *update_game(void *arg) {
     star_t * star = (star_t *)arg;
     while(1) {
         pthread_mutex_lock(&dmutex);
@@ -112,46 +114,54 @@ void *deplacer_star(void *arg) {
             star->posl_bomb = star->posl;
             star->posc_bomb = star->posc;
             star->timer = star->n *2;
-            star->plateau[star->posl_bomb][star->posc_bomb] = 4;
+            star->plateau[star->posl_bomb][star->posc_bomb] = BOMB;
+            star->bomb_cpt++;
             star->plantingBomb = FALSE;
         } 
         else if (star->direction != IDLE) {
-            calculer_direction(star);
+            calculate_direction(star);
         }          
     
-        afficher_plateau(*star);
+        display_game(*star);
         star->direction = IDLE;
-      
-        pthread_mutex_unlock(&dmutex);
 
         if (star->is_alive == FALSE) {
             end_game(star);
             return 0;
         }
-        
+      
+        pthread_mutex_unlock(&dmutex);
 
         Sleep(500);
     }
 }
 
 int main() {
+
+    clear_screen();
+
     star_t star;
     star.direction = IDLE;
     star.n = 3;
     star.timer = 0;
     star.plantingBomb = FALSE;
     star.is_alive = TRUE;
+    star.bomb_cpt = 0;
+    star.obstacle_cpt = 0;
+
+    printf("Choisir un pseudo : ");
+    scanf("%s",star.pseudo);
 
     pthread_t anim,clavier;
     srand(time(0));
 
     char fichier[] = "plateauF.txt";
 
-	lire_plateau(&fichier,&star);
+	read_board_game(&fichier,&star);
     init_objects(&star);
 
-    pthread_create(&anim,NULL,deplacer_star,&star);
-    pthread_create(&clavier,NULL,lire_clavier,&star);
+    pthread_create(&anim,NULL,update_game,&star);
+    pthread_create(&clavier,NULL,read_keyboard,&star);
     pthread_join(anim,NULL);
 	return 0;
 }
