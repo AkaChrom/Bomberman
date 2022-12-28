@@ -8,6 +8,14 @@
 #include <windows.h>
 #include <conio.h>
 
+#include <winsock2.h>
+
+// port d'écoute
+#define PORT 666
+// port d'envoi
+#define PORT_D 777
+
+
 #define TRUE 1
 #define FALSE 0
 
@@ -85,7 +93,6 @@ void display_game(game_t game);
 void calculate_position(game_t *game, int i);
 void end_game(game_t *game);
 void explosion(game_t *game, int id);
-
 
 
 

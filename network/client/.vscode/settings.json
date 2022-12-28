@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "winsock2.h": "c",
+        "cmath": "c",
+        "conio.h": "c"
+    }
+}

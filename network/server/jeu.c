@@ -115,6 +115,8 @@ void *update_game(game_t *game) {
 
 int main() {
 
+    test_net();
+    
     game_t game;
     // initialisation du joueur
     init_players(&game);
