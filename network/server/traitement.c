@@ -48,7 +48,9 @@ void calculate_position(game_t *game, int id) {
             break;
     }   
     // ajout de la nouvelle position du joueur sur le plateau
-    game->plateau[game->player[id].posl][game->player[id].posc] = PLAYER;        
+    if (game->plateau[game->player[id].posl][game->player[id].posc] != BOMB) {
+        game->plateau[game->player[id].posl][game->player[id].posc] = PLAYER;        
+    }   
 }
 
 /**
@@ -58,41 +60,25 @@ void calculate_position(game_t *game, int id) {
 void end_game(game_t *game) {
 
     printf("\n\n---- PARTIE TERMINEE ----\n\n");
-    
-    if (game->nb_player == 2) {
-        if ((!game->player[0].is_alive) && (game->player[1].is_alive)) {
-            printf(" >> VICTOIRE DE %s <<\n\n",game->player[1].pseudo);
-        }   
-        else if ((game->player[0].is_alive) && (!game->player[1].is_alive)) {
-            printf(" >> VICTOIRE DE %s <<\n\n",game->player[0].pseudo);
-        }
-        else {
-            printf(" >> EGALITE <<\n\n");
-        }
-        return 0;
+    // création du message de fin
+    char msg[100];
+    strcpy(msg,"");
+    // determine le gangant
+    if ((!game->player[0].is_alive) && (game->player[1].is_alive)) {
+        sprintf(&msg, " >> VICTOIRE DE %s <<\r\n\r\n",game->player[1].pseudo);
+    }   
+    else if ((game->player[0].is_alive) && (!game->player[1].is_alive)) {
+        sprintf(&msg, " >> VICTOIRE DE %s <<\r\n\r\n",game->player[0].pseudo);
     }
-
-
-    if (!game->player[0].is_alive) {
-        printf(" >> VOUS AVEZ PERDU !! <<\n\n");
-        return 0;
+    else {
+        sprintf(&msg, " >> EGALITE <<\r\n\r\n");
     }
-
-    printf(" >> VOUS AVEZ GAGNE !! <<\n\n");
-    
-    // creation d'un pointeur pour le fichier
-    FILE *fptr;
-    // ouverture du fichier en mode "append"
-    fptr = fopen("Scores.txt","a");  
-    // récupération de la date actuelle
-    time_t t;   // not a primitive datatype
-    time(&t);   
-    // ajout du score
-    fprintf(fptr,"%s | %.2f | %s",game->player[0].pseudo,calculate_score(game->player[0]),ctime(&t));
-    // fermeture du fichier
-    fclose(fptr);
-
-    return 0;
+    // envoie du message
+    send_infos(msg, 100);
+    // affichage du message
+    printf(msg);
+    // stop le serveur
+    stop_server();
 }
 
 /**
@@ -199,6 +185,5 @@ void explosion(game_t *game, int id) {
             is_blocked = compute_explosion(&game, id, lgn, game->player[id].posc_bomb);
         }              
     }  
-    return 0;
 }
 

@@ -44,25 +44,42 @@ void clear_screen() {
 void display_game(game_t game) {
     // efface l'écran
     clear_screen();
-    // affichage du score pour chaque joueur
-    for (int id = 0; id < game.nb_player; id++) {
-        printf("Joueur : %s   score : %.2f\n\n",game.player[id].pseudo, calculate_score(game.player[id]));
-    }    
-    // affichage du plateau
-	int i, j;
-    for (i=0; i<game.lignes; i++ ){
-        for (j=0; j<game.colonnes; j++ ){
-            if (game.plateau[i][j] == WALL)
-                printf("#");
-            else if (game.plateau[i][j] == PLAYER)
-                printf("B");
-            else if (game.plateau[i][j] == OBSTACLE)
-                printf("x");
-            else if (game.plateau[i][j] == BOMB)
-                printf("o");    
-            else
-                printf(" ");
+    // nombre de caractères du plateau
+    int taille_plateau = game.lignes*(game.colonnes+2)*((int) (sizeof(char)));
+    // plateau sous la forme d'une chaine de caratères
+    char plateau[taille_plateau];
+    strcpy(plateau,"");
+    // parcours des lignes du plateau 
+    for (int i = 0; i < game.lignes; i++) {
+        // parcours des colonnes du plateau
+        for (int j = 0; j < game.colonnes; j++) {
+            if (game.plateau[i][j] == WALL) {
+                strcat(plateau,"#");
+            }
+            else if (game.plateau[i][j] == PLAYER) {
+                strcat(plateau,"B");
+            }
+            else if (game.plateau[i][j] == OBSTACLE) {
+                strcat(plateau,"x");
+            }
+            else if (game.plateau[i][j] == BOMB) {
+                strcat(plateau,"o");    
+            }
+            else {
+                strcat(plateau," ");
+            }
         }
-        printf("\n");
+        strcat(plateau,"\r\n");
     }
+    // affichage/envoi des scores pour chaque joueur
+    for (int id = 0; id < game.nb_player; id++) {
+        char score[100];  
+        sprintf(&score, "%.2f", calculate_score(game.player[id]));
+        send_infos(score, 100);
+        printf("Joueur %d : %s   score : %s\n\n", (id+1), game.player[id].pseudo, score);
+    }  
+    // envoi du plateau au client
+    send_infos(plateau, taille_plateau);
+    // affiche le plateau
+    printf(plateau);     
 }

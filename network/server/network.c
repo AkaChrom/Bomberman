@@ -46,6 +46,7 @@ void start_connexion() {
     // taille de la informations 
     int sinsize = sizeof(csin);
     // attente d'acceptation d'une connexion d'un client
+    printf("> ATTENTE D'UNE CONNEXION");
     while ((csock = accept(sock, (SOCKADDR *)&csin, &sinsize)) == INVALID_SOCKET) {
         printf("\n ERREUR : CONNEXION AU SOCKET NON ACCEPTEE");
     }
@@ -54,32 +55,36 @@ void start_connexion() {
 /**
  * envoi les données au client 
  */
-void send_infos() {
-     send(csock, "COUCOU c'est le serveur!\r\n", 27, 0);
+void send_infos(char* msg, int len) {
+    send(csock, msg, len, 0);
 }
 
 /**
  * réceptionne les données du client
  */
-void recv_infos() {
+char* recv_infos(int len) {
     // buffer servant à contenir le futur message
-    char buffer[255];
-    recv(csock, buffer, sizeof(buffer), 0);
-    printf("MSG : %s",buffer);
+    char *buffer = (char *)malloc(len*sizeof(char));
+    recv(csock, buffer, len, 0);
+    //printf("MSG : %s",buffer);
+    return buffer;
 }
 
-void test_net() {
-
+/**
+ * lancement du serveur
+ */
+void start_server() {
+    clear_screen();
     init_winsock();
     init_socket();
     start_connexion();
+}
 
-    while (1)
-    {
-        send_infos();
-        recv_infos();
-        Sleep(1000);
-    }
-    
-
+/**
+ * arrêt du server
+ */
+void stop_server() {
+    closesocket(sock);
+    closesocket(csock);
+    WSACleanup();
 }

@@ -127,7 +127,6 @@ void init_objects(game_t *game) {
         while(game->plateau[i][j] != EMPTY);
         game->plateau[i][j] = OBSTACLE;
     }      
-    return 0;
 }
 
 /**

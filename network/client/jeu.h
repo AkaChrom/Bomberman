@@ -79,8 +79,6 @@ typedef struct{
 
 void init_players(game_t *game);
 void read_board_game(char *fichier,game_t *game);
-void init_objects(game_t *game);
-float calculate_score(player_t player);
 
 // affichage.c
 
@@ -89,12 +87,13 @@ void display_game(game_t game);
 
 // traitement.c
 
-void calculate_position(game_t *game, int i);
 void end_game(game_t *game);
-void explosion(game_t *game, int id);
 
 // network.c
 
-void test_net();
+void start_server();
+void stop_server();
+void send_infos(char* msg, int len);
+char* recv_infos(int len);
 
 

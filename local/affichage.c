@@ -52,16 +52,21 @@ void display_game(game_t game) {
 	int i, j;
     for (i=0; i<game.lignes; i++ ){
         for (j=0; j<game.colonnes; j++ ){
-            if (game.plateau[i][j] == WALL)
+            if (game.plateau[i][j] == WALL) {
                 printf("#");
-            else if (game.plateau[i][j] == PLAYER)
+            }
+            else if (game.plateau[i][j] == PLAYER) {
                 printf("B");
-            else if (game.plateau[i][j] == OBSTACLE)
+            }
+            else if (game.plateau[i][j] == OBSTACLE) {
                 printf("x");
-            else if (game.plateau[i][j] == BOMB)
+            }
+            else if (game.plateau[i][j] == BOMB) {
                 printf("o");    
-            else
+            }
+            else {
                 printf(" ");
+            }
         }
         printf("\n");
     }

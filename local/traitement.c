@@ -48,7 +48,9 @@ void calculate_position(game_t *game, int id) {
             break;
     }   
     // ajout de la nouvelle position du joueur sur le plateau
-    game->plateau[game->player[id].posl][game->player[id].posc] = PLAYER;        
+    if (game->plateau[game->player[id].posl][game->player[id].posc] != BOMB) {
+        game->plateau[game->player[id].posl][game->player[id].posc] = PLAYER; 
+    }              
 }
 
 /**
@@ -91,8 +93,6 @@ void end_game(game_t *game) {
     fprintf(fptr,"%s | %.2f | %s",game->player[0].pseudo,calculate_score(game->player[0]),ctime(&t));
     // fermeture du fichier
     fclose(fptr);
-
-    return 0;
 }
 
 /**
@@ -199,6 +199,5 @@ void explosion(game_t *game, int id) {
             is_blocked = compute_explosion(&game, id, lgn, game->player[id].posc_bomb);
         }              
     }  
-    return 0;
 }
 

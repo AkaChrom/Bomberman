@@ -4,8 +4,8 @@
 pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
 
 /**
- * lit les entrés du clavier et assigne une direction au(x) joueur(s)
- * @param player le tableau du/des joueur(s)
+ * lit les entrés du clavier et assigne une direction au joueur
+ * @param player le tableau des joueurs
  * @return void* 
  */
  void *read_keyboard(player_t *player){
@@ -31,26 +31,7 @@ pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
             if (player[0].timer == 0 ) {
                 player[0].planting_bomb = TRUE;
             }            
-        }       
-
-        // Joueur 2
-        if (GetAsyncKeyState('Z') < 0) {
-            player[1].direction = UP;
-        } 
-        if (GetAsyncKeyState('Q') < 0) {
-            player[1].direction = LEFT;
-        }
-        if (GetAsyncKeyState('S') < 0) {
-            player[1].direction = DOWN;
-        }
-        if (GetAsyncKeyState('D') < 0) {
-            player[1].direction = RIGHT;
-        }
-        if (GetAsyncKeyState('W') < 0) {
-            if (player[1].timer == 0 ) {
-                player[1].planting_bomb = TRUE;
-            }    
-        }
+        }      
 
         pthread_mutex_unlock(&dmutex);     
         Sleep(1);
@@ -64,10 +45,23 @@ pthread_mutex_t dmutex = PTHREAD_MUTEX_INITIALIZER;
  */
 void *update_game(game_t *game) {
 
+    boolean end_of_game = FALSE;
+
     while(1) {
 
         pthread_mutex_lock(&dmutex);
 
+        // récupération de la commande du client
+        game->player[1].direction = atoi(recv_infos(5));
+        // si le joeur 2 souhaite planter la bombe
+        char is_planting; 
+        sprintf(&is_planting, "%s",  recv_infos(5));
+        if (is_planting == '1') {
+            if (game->player[1].timer == 0 ) {
+                game->player[1].planting_bomb = TRUE;
+            }   
+        }        
+        // traitement des joeurs
         for (int id = 0; id < game->nb_player; id++) {
             // si une bombe est posée
             if (game->player[id].timer > 0) {
@@ -90,20 +84,20 @@ void *update_game(game_t *game) {
             }  
             // réinitialisation de la direction du joueur
             game->player[id].direction = IDLE;
-
-            // si les conditions de fin de parties sont réunis (mode 1 joueur)  
-            if ((game->nb_obstacles == 0) && (game->nb_player == 1)) {
-                display_game(*game);
-                end_game(game);
-                return 0;
-            }
             // sinon si les conditions de fin de parties sont réunis (mode 2 joueurs)
-            else if ((game->player[id].is_alive == FALSE)) {
-                display_game(*game);
-                end_game(game);
-                return 0;
+            if ((game->player[id].is_alive == FALSE)) {
+                end_of_game = TRUE;    
             }
-        }                        
+        }
+        // fin du jeu
+        if (end_of_game == TRUE) {
+            // prévient que le jeux est fini
+            send_infos("0", 5);
+            end_game(game);
+            return 0;
+        }        
+        // prévient que le jeux continue
+        send_infos("1", 5);
         // affichage du jeu
         display_game(*game); 
       
@@ -115,8 +109,9 @@ void *update_game(game_t *game) {
 
 int main() {
 
-    test_net();
-    
+    // initialisation du server
+    start_server();
+    // initialisation de la structure du jeu
     game_t game;
     // initialisation du joueur
     init_players(&game);

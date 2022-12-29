@@ -42,27 +42,18 @@ void clear_screen() {
  * @param game la structure du jeu
  */
 void display_game(game_t game) {
-    // efface l'écran
+   // efface l'écran
     clear_screen();
+    // nombre de caractères du plateau
+    int taille_plateau = game.lignes*(game.colonnes+2)*((int) (sizeof(char)));
+    // plateau sous la forme d'une chaine de caratères
+    char plateau[taille_plateau];
     // affichage du score pour chaque joueur
     for (int id = 0; id < game.nb_player; id++) {
-        printf("Joueur : %s   score : %.2f\n\n",game.player[id].pseudo, calculate_score(game.player[id]));
-    }    
-    // affichage du plateau
-	int i, j;
-    for (i=0; i<game.lignes; i++ ){
-        for (j=0; j<game.colonnes; j++ ){
-            if (game.plateau[i][j] == WALL)
-                printf("#");
-            else if (game.plateau[i][j] == PLAYER)
-                printf("B");
-            else if (game.plateau[i][j] == OBSTACLE)
-                printf("x");
-            else if (game.plateau[i][j] == BOMB)
-                printf("o");    
-            else
-                printf(" ");
-        }
-        printf("\n");
-    }
+        printf("Joueur %d : %s   score : %s\n\n", (id+1), game.player[id].pseudo, recv_infos(100));
+    }                
+    // récupération du plateau
+    snprintf(&plateau, taille_plateau, "%s", recv_infos(taille_plateau));  
+    // affiche le plateau
+    printf(plateau);    
 }

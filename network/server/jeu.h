@@ -94,5 +94,10 @@ void calculate_position(game_t *game, int i);
 void end_game(game_t *game);
 void explosion(game_t *game, int id);
 
+// network.c
 
+void start_server();
+void stop_server();
+void send_infos(char* msg, int len);
+char* recv_infos(int len);
 

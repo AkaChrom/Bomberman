@@ -25,11 +25,11 @@ void init_socket() {
     char addr_ip[16];
     // selection de l'adresse ip de l'hôte distant
     printf("Entrer l'@Ip de l'autre joueur : ");
-    //scanf("%s",&addr_ip);
+    scanf("%s",&addr_ip);
     // création du socket
     csock = socket(AF_INET, SOCK_STREAM, 0);
     // adresse du server distant
-    csin.sin_addr.s_addr = inet_addr("127.0.0.1");//&addr_ip);
+    csin.sin_addr.s_addr = inet_addr(&addr_ip);
     csin.sin_family = AF_INET;
     // port d'écoute
     csin.sin_port = htons(PORT_D);
@@ -49,32 +49,37 @@ void start_connexion() {
 }
 
 /**
- * envoi les données au client 
+ * réceptionne les données du client
  */
-void recv_infos() {
-    // buffer servant à contenir le futur message
-    char buffer[255];
-    recv(csock, buffer, sizeof(buffer), 0);
-    printf("MSG : %s",buffer);
+void send_infos(char* msg, int len) {
+    send(csock, msg, len, 0);
 }
 
 /**
- * réceptionne les données du client
+ * envoi les données au client 
  */
-void send_infos() {
-     send(csock, "salut à toi aussi, c'est le client\r\n", 38, 0);
+char* recv_infos(int len) {
+    // buffer servant à contenir le futur message
+    char *buffer = (char *)malloc(len*sizeof(char));
+    recv(csock, buffer, len, 0);
+    //printf("MSG : %s",buffer);
+    return buffer;
 }
 
-void test_net() {
-
+/**
+ * lancement du serveur
+ */
+void start_client() {
+    clear_screen();
     init_winsock();
     init_socket();
     start_connexion();
+}
 
-    while (1)
-    {
-        send_infos();
-        recv_infos();
-    }
-
+/**
+ * arrêt du server
+ */
+void stop_server() {
+    closesocket(csock);
+    WSACleanup();
 }

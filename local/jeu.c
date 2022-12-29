@@ -67,7 +67,7 @@ void *update_game(game_t *game) {
     while(1) {
 
         pthread_mutex_lock(&dmutex);
-
+        // traitement des joeurs
         for (int id = 0; id < game->nb_player; id++) {
             // si une bombe est posée
             if (game->player[id].timer > 0) {

@@ -7,31 +7,45 @@
 void init_players(game_t *game) {  
 
     clear_screen();
-    // Choisir entre 1 ou 2 joueurs
-    do
-    {
-        printf("Mode : 1 ou 2 joueurs ? ");
-        scanf("%d",&game->nb_player);
-    }
-    while ((game->nb_player !=1) && (game->nb_player != 2));
-    
+    // initialisation du nombre de joueur à 2
+    game->nb_player = 2;
     // allocation de l'espace mémoire
     game->player = (player_t *)malloc(game->nb_player*sizeof(player_t));
-    // initialisation des joueurs
-    for (int id = 0; id < game->nb_player; id++)
+    
+    // initialisation du joueur 1
+    printf("\n ---- JOUEUR HOST ---- \n");
+    // choisir le pseudo du joueur
+    printf("\nPseudo :  ");
+    scanf("%s",&game->player[0].pseudo);
+    // envoi du pseudo
+    send_infos(game->player[0].pseudo, 20);
+    // Choisir le rayon de l'explosion
+    do
     {
-        printf("\n ---- JOUEUR %d ---- \n",(id+1));
-        // choisir le pseudo du joueur
-        printf("\nPseudo :  ");
-        scanf("%s",&game->player[id].pseudo);
-        // Choisir le rayon de l'explosion
-        do
-        {
-            printf("Rayon de l'explosion (> 0) : ");
-            scanf("%d",&game->player[id].n);
-        }
-        while (game->player[id].n < 1);
-        // initialises les autres paramètres par défaut
+        printf("Rayon de l'explosion (> 0) : ");
+        scanf("%d",&game->player[0].n);
+    }
+    while (game->player[0].n < 1);
+    // envoi du rayon de l'explosion
+    char n[5];  
+    sprintf(&n, "%d", game->player[0].n);
+    send_infos(n, 5);
+
+    // initialisation du joueur 2
+    printf("\n ---- JOUEUR GUEST ---- \n");   
+    // récupération du pseudo du joueur 2
+    printf("\nPseudo :  ");       
+    snprintf(&game->player[1].pseudo, 20, "%s", recv_infos(20));
+    printf("%s",game->player[1].pseudo);
+    // récupération du rayon de l'explosion
+    printf("\nRayon de l'explosion (> 0) : "); 
+    // atoi : String/ASCII -> int 
+    game->player[1].n = atoi(recv_infos(5));
+    printf("%d",game->player[1].n);
+
+    // pour tous les joueurs    
+    for (int id = 0; id < game->nb_player; id++) {
+        // initialises les autres paramètres par défaut   
         game->player[id].timer = 0;
         game->player[id].bomb_cpt = 0;
         game->player[id].obstacle_cpt = 0;
@@ -39,6 +53,13 @@ void init_players(game_t *game) {
         game->player[id].is_alive = TRUE;
         game->player[id].direction = IDLE;
     }
+    // effet de chargement (pour le style)
+    printf("\n\n > LANCEMENT DE LA PARTIE ");  
+    for (int k = 0; k < 3; k++)
+    {
+        printf(".");
+        Sleep(500);
+    }    
     clear_screen();
 }
 
@@ -127,7 +148,6 @@ void init_objects(game_t *game) {
         while(game->plateau[i][j] != EMPTY);
         game->plateau[i][j] = OBSTACLE;
     }      
-    return 0;
 }
 
 /**
