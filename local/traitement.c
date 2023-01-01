@@ -7,11 +7,6 @@
  */
 void calculate_position(game_t *game, int id) {
 
-    //printf("\n DEPLACEMENT de %d",id);
-//
-    //printf("\n DIRECTION : %d",game->player[id].direction);
-//
-
     /* si le joueur vient de placer la bombe, 
      * on ne remplace pas son ancienne position par du vide */
     if (game->plateau[game->player[id].posl][game->player[id].posc] != BOMB) {
