@@ -45,7 +45,7 @@ typedef struct{
     // vrai si le joueur est en vie
     boolean is_alive;
     // direction du joueur
-    enum direction direction; // direction actuelle du bomberman
+    enum direction direction;
 } player_t;
 
 
