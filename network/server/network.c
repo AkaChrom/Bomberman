@@ -66,7 +66,6 @@ char* recv_infos(int len) {
     // buffer servant à contenir le futur message
     char *buffer = (char *)malloc(len*sizeof(char));
     recv(csock, buffer, len, 0);
-    //printf("MSG : %s",buffer);
     return buffer;
 }
 

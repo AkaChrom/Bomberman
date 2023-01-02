@@ -82,7 +82,7 @@ void end_game(game_t *game) {
     // ouverture du fichier en mode "append"
     fptr = fopen("Scores.txt","a");  
     // récupération de la date actuelle
-    time_t t;   // not a primitive datatype
+    time_t t; 
     time(&t);   
     // ajout du score
     fprintf(fptr,"%s | %.2f | %s",game->player[0].pseudo,calculate_score(game->player[0]),ctime(&t));
