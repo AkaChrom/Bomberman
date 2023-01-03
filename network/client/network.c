@@ -22,7 +22,7 @@ void init_winsock() {
 void init_socket() {
 
     // adresse ip du server distant
-    char addr_ip[16];
+    char addr_ip[40];
     // selection de l'adresse ip de l'hôte distant
     printf("Entrer l'@Ip de l'autre joueur : ");
     scanf("%s",&addr_ip);
@@ -40,7 +40,6 @@ void init_socket() {
  * (méthode bloquante jusqu'au succès d'une connexion)
  */
 void start_connexion() {    
-    printf("SLT C MOI\n");
     // attente d'acceptation d'une connexion d'un client   
     while (connect(csock, (SOCKADDR *)&csin, sizeof(csin)) == SOCKET_ERROR) {
         printf("TENTATIVE DE CONNEXION ...\n");
@@ -49,14 +48,15 @@ void start_connexion() {
 }
 
 /**
- * réceptionne les données du client
+ * envoi les données au client 
  */
 void send_infos(char* msg, int len) {
     send(csock, msg, len, 0);
 }
 
+
 /**
- * envoi les données au client 
+ * réceptionne les données du client
  */
 char* recv_infos(int len) {
     // buffer servant à contenir le futur message
