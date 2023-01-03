@@ -139,11 +139,11 @@ void init_objects(game_t *game) {
     // calcul du nombre d'obstacle
     game->nb_obstacles = 20 + rand()%10;
     // placement des obstacles
-    for (size_t k = 0; k <  game->nb_obstacles; k++)
+    for (int k = 1; k <  game->nb_obstacles; k++)
     {
         do{
-            i = rand()%(game->lignes);
-            j = rand()%(game->colonnes);
+            i = rand()%(game->lignes-2) + 1;
+            j = rand()%(game->colonnes-2) + 1;
         }
         while(game->plateau[i][j] != EMPTY);
         game->plateau[i][j] = OBSTACLE;
