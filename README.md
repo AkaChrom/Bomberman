@@ -2,8 +2,6 @@
 
 C'est un jeu bomberman en c sous Windows.
 
-(Marche sous Windows).
-
 **Lancer le jeu :**
 + installer gcc
 + ouvrir un terminal PowerShell dans le dossier du jeu
