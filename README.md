@@ -1,17 +1,14 @@
 # Bomberman
 
-C'est un jeu bomberman en c.
+C'est un jeu bomberman en c sous Windows.
 
 (Marche sous Windows).
 
 **Lancer le jeu :**
 + installer gcc
-+ ouvrir un terminal dans le dossier du jeu
++ ouvrir un terminal PowerShell dans le dossier du jeu
 + entrer la commande suivante
+
 ```
 if ($?) { rm *.o } ; if ($?) { gcc -o ./jeu *.c -lwsock32 } ; if ($?) { ./jeu }
 ```
-
-mon README est trop beau, je ne te permets pas.
-
-oui.
