@@ -11,7 +11,3 @@ C'est un jeu bomberman en c.
 ```
 if ($?) { rm *.o } ; if ($?) { gcc -o ./jeu *.c -lwsock32 } ; if ($?) { ./jeu }
 ```
-
-mon README est trop beau, je ne te permets pas.
-
-oui.
